@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Growth Animation</title>
+  <!-- Include p5.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+</head>
+<body>
+  <script>
+    let seedPlanted = false;
+    let plantGrowth = 0;
+    let watering = false;
+    let showMessage = false;
+    let waterButton;
+
+    function setup() {
+      createCanvas(600, 400);
+      waterButton = createButton('Pour Water');
+      waterButton.position(20, 20);
+      waterButton.mousePressed(startWatering);
+      waterButton.hide(); // Hide the button until the seed is planted
+    }
+
+    function draw() {
+      background(135, 206, 235); // Sky blue background
+
+      drawSoil();
+
+      if (!seedPlanted) {
+        fill(0);
+        textSize(20);
+        textAlign(CENTER);
+        text('Click on the soil to plant a seed', width / 2, 50);
+      }
+
+      if (seedPlanted) {
+        waterButton.show(); // Show the water button
+        drawPlant();
+      }
+
+      if (watering) {
+        plantGrowth += 0.5;
+        if (plantGrowth >= 100) {
+          plantGrowth = 100;
+          watering = false;
+          showMessage = true;
+        }
+      }
+
+      if (showMessage) {
+        fill(0);
+        textSize(24);
+        textAlign(CENTER);
+        text('Thank You for Sustaining Environment', width / 2, height / 2);
+      }
+    }
+
+    function mousePressed() {
+      if (!seedPlanted && mouseY > height / 2) { // Ensure click is on the soil
+        seedPlanted = true;
+      }
+    }
+
+    function startWatering() {
+      watering = true;
+    }
+
+    function drawSoil() {
+      fill(139, 69, 19); // Brown color for soil
+      rect(0, height / 2, width, height / 2);
+    }
+
+    function drawPlant() {
+      let x = width / 2;
+      let y = height / 2;
+      let stemHeight = map(plantGrowth, 0, 100, 0, -150);
+
+      // Draw stem
+      stroke(34, 139, 34); // Green color for stem
+      strokeWeight(4);
+      line(x, y, x, y + stemHeight);
+
+      // Draw leaves when plantGrowth > 20
+      if (plantGrowth > 20) {
+        fill(34, 139, 34);
+        noStroke();
+        ellipse(x - 15, y + stemHeight + 30, 30, 15);
+        ellipse(x + 15, y + stemHeight + 30, 30, 15);
+      }
+
+      // Draw flower when plant is fully grown
+      if (plantGrowth == 100) {
+        fill(255, 0, 0);
+        ellipse(x, y + stemHeight - 20, 30, 30);
+      }
+    }
+  </script>
+</body>
+</html>
